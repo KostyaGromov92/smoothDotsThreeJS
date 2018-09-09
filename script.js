@@ -1,4 +1,40 @@
 var camera, controls, scene, renderer, mesh, geometry, dots;
+let canvas = document.createElement('canvas');
+let size = 200;
+let ctx = canvas.getContext('2d');
+let imageCoords = [];
+
+canvas.width = size;
+canvas.height = size;
+canvas.classList.add('tmpcanvas');
+
+document.body.appendChild(canvas);
+
+let img = new Image();
+img.src = 'img/close.svg';
+
+img.onload = () => {
+  ctx.drawImage(img, 0, 0, size, size);
+
+  let data = ctx.getImageData(0, 0, size, size);
+  data = data.data;
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      let red = data[((size * y) + x) * 4];
+      let green = data[((size * y) + x) * 4 + 1];
+      let blue = data[((size * y) + x) * 4 + 2];
+      let alpha = data[((size * y) + x) * 4 + 3];
+
+      if(alpha > 0) {
+        imageCoords.push(x, y);
+      }
+      
+    }
+    
+  }
+}
+
 
 function init() {
   scene = new THREE.Scene();
@@ -6,8 +42,6 @@ function init() {
   // scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
   renderer = new THREE.WebGLRenderer();
-
-
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerWidth);
@@ -36,7 +70,7 @@ function init() {
   geometry = new THREE.Geometry();
   let x, y, z;
 
-  for (let i = 0; i <= 100; i++) {
+  for (let i = 0; i <= 10000; i++) {
     x = Math.sin(i/10) * 100; 
     y = Math.cos(i/10) * 100; 
     z = i;
